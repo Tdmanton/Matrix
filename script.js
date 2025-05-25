@@ -37,3 +37,69 @@ function draw() {
 }
 
 setInterval(draw, 50);
+
+
+// Fireworks particles
+let particles = [];
+
+function createFirework(x, y) {
+  for (let i = 0; i < 50; i++) {
+    particles.push({
+      x: x,
+      y: y,
+      radius: Math.random() * 2 + 1,
+      color: color,
+      angle: Math.random() * 2 * Math.PI,
+      speed: Math.random() * 5 + 2,
+      alpha: 1
+    });
+  }
+}
+
+function drawFireworks() {
+  for (let i = 0; i < particles.length; i++) {
+    let p = particles[i];
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = `rgba(255, 105, 180, ${p.alpha})`;
+    ctx.fill();
+    p.x += Math.cos(p.angle) * p.speed;
+    p.y += Math.sin(p.angle) * p.speed;
+    p.alpha -= 0.02;
+  }
+  particles = particles.filter(p => p.alpha > 0);
+}
+
+canvas.addEventListener("click", function(event) {
+  createFirework(event.clientX, event.clientY);
+});
+
+function animate() {
+  draw();
+  drawFireworks();
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+
+const fireAudio = document.getElementById("fireAudio");
+
+canvas.addEventListener("click", function(event) {
+  createFirework(event.clientX, event.clientY);
+  if (fireAudio) {
+    fireAudio.currentTime = 0;
+    fireAudio.play();
+  }
+});
+
+// авто-феєрверки кожні 2 секунди
+setInterval(() => {
+  let x = Math.random() * canvas.width;
+  let y = Math.random() * canvas.height / 2;
+  createFirework(x, y);
+  if (fireAudio) {
+    fireAudio.currentTime = 0;
+    fireAudio.play();
+  }
+}, 2000);
