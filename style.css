@@ -13,13 +13,3 @@ canvas {
   left: 0;
 }
 
-.text {
-  position: absolute;
-  top: 40%;
-  width: 100%;
-  text-align: center;
-  font-size: 32px;
-  color: white;
-  font-family: 'Courier New', monospace;
-  z-index: 10;
-}
