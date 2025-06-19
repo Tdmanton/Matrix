@@ -1,13 +1,19 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+let ratio = window.devicePixelRatio || 1;
 
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
+function resizeCanvas() {
+  ratio = window.devicePixelRatio || 1;
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
+  canvas.width = window.innerWidth * ratio;
+  canvas.height = window.innerHeight * ratio;
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
 
 let hearts = [];
 
@@ -19,8 +25,8 @@ function randomColor() {
 }
 
 function createHeart() {
-  const x = Math.random() * canvas.width;
-  const y = canvas.height + 20;
+  const x = Math.random() * canvas.clientWidth;
+  const y = canvas.clientHeight + 20;
   const size = Math.random() * 10 + 10;
   const speed = Math.random() * 2 + 1;
   const color = randomColor();
@@ -46,7 +52,7 @@ function drawHeart(h) {
 }
 
 function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width / ratio, canvas.height / ratio);
 
   for (let h of hearts) {
     h.y -= h.speed;
