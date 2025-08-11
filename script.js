@@ -1,57 +1,47 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const fontSize = 16;
+const characters =
+  "アァカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-let hearts = [];
+let columns;
+let drops;
 
-function randomColor() {
-  const r = Math.floor(Math.random() * 155 + 100);
-  const g = Math.floor(Math.random() * 100);
-  const b = Math.floor(Math.random() * 155 + 100);
-  return `rgb(${r}, ${g}, ${b})`;
+function setup() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  columns = Math.floor(canvas.width / fontSize);
+  drops = Array(columns).fill(0);
 }
 
-function createHeart() {
-  const x = Math.random() * canvas.width;
-  const y = canvas.height + 20;
-  const size = Math.random() * 10 + 10;
-  const speed = Math.random() * 2 + 1;
-  const color = randomColor();
-  hearts.push({x, y, size, speed, color});
-}
+function draw() {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-function drawHeart(h) {
-  ctx.save();
-  ctx.translate(h.x, h.y);
-  ctx.scale(h.size / 30, h.size / 30);
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.bezierCurveTo(0, -3, -5, -15, -15, -15);
-  ctx.bezierCurveTo(-35, -15, -35, 10, -35, 10);
-  ctx.bezierCurveTo(-35, 25, -15, 40, 0, 50);
-  ctx.bezierCurveTo(15, 40, 35, 25, 35, 10);
-  ctx.bezierCurveTo(35, 10, 35, -15, 15, -15);
-  ctx.bezierCurveTo(5, -15, 0, -3, 0, 0);
-  ctx.closePath();
-  ctx.fillStyle = h.color;
-  ctx.fill();
-  ctx.restore();
-}
+  ctx.font = fontSize + "px monospace";
 
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < drops.length; i++) {
+    const text = characters.charAt(
+      Math.floor(Math.random() * characters.length)
+    );
+    const x = i * fontSize;
+    const y = drops[i] * fontSize;
 
-  for (let h of hearts) {
-    h.y -= h.speed;
-    drawHeart(h);
+    ctx.fillStyle = "#0F0";
+    ctx.fillText(text, x, y);
+
+    drops[i] = drops[i] + 1;
+
+    if (y > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
   }
 
-  hearts = hearts.filter(h => h.y + h.size > 0);
-
-  requestAnimationFrame(animate);
+  requestAnimationFrame(draw);
 }
 
-setInterval(createHeart, 100);
-animate();
+window.addEventListener("resize", setup);
+
+setup();
+requestAnimationFrame(draw);
